@@ -12,7 +12,7 @@ export default function BrowserNotSupported() {
                 />
             </div>
             <h1 className='font-PublicSans text-lg bold lg:text-xl text-white text-center'>Oops..</h1>
-            <p className='font-Inter text-xs lg:text-sm text-white text-center'>Looks like your browser isn't supported by this site yet. <br />Try <a className="underline text-blue-500" href="https://www.firefox.com">Firefox</a> instead.</p>
+            <p className="font-Inter text-xs lg:text-sm text-white text-center">Looks like your browser isn&apos;t supported by this site yet. <br />Try <a className="underline text-blue-500" href="https://www.firefox.com">Firefox</a> instead.</p>
         </div>
     )
 }
