@@ -1,8 +1,9 @@
 import { useEffect , useState } from 'react';
-import { difference } from '../utils/operations';
-import TrainMap from '../components/train-map';
-import TrainTitle from '../components/train-title';
 import { fetchStops } from '../utils/mbta-fetch';
+import { difference } from '../utils/operations';
+import Window from '../components/window';
+import TrainTitle from '../components/train-title';
+import TrainMap from '../components/train-map';
 
 // Ashmont will be treated in this project as a separate branch of the red line
 // Because of this, I will need to specify its unique stops and assign it to its own object of type Set
@@ -18,9 +19,15 @@ const branchNames: string[] = ["Alewife - Braintree", "Alewife - Ashmont", "Matt
 const Trains = () => {
     // Make state for storing each of the branches respective stop lists
     const [redBranch, setRedBranch] = useState<string[][] | null | any[]>(null);
+    // Set state for whether user's browser is firefox or not
+    const [isFirefox, setIsFirefox] = useState(false);
 
     // Load the all the branch stop data on page load or on mount
     useEffect(() => {
+        // When client side is rendered, update state
+        // @ts-ignore
+        // NOTE : InstallTrigger has depreciated as of 2018
+        setIsFirefox(typeof InstallTrigger !== 'undefined');
         // Store a promise object for each of the branches' stops upon making request
         const brainBranch = fetchStops('Red').then(stops => Array.from(difference(stops, ASHMONT_STOPS)));
         const ashBranch = fetchStops('Red').then(stops => ["place-jfk", ...Array.from(ASHMONT_STOPS)]);
@@ -33,10 +40,12 @@ const Trains = () => {
 
     // Render component to DOM
     return (
-        <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
-            <TrainTitle name="Red Line" branchNames={branchNames} color={color} />
-            {redBranch != null ? <TrainMap branches={redBranch} color={color} branchNames={branchNames} /> : null}
-        </div>
+        <Window isCompat={isFirefox}>
+            <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
+                <TrainTitle name="Red Line" branchNames={branchNames} color={color} />
+                {redBranch != null ? <TrainMap branches={redBranch} color={color} branchNames={branchNames} /> : null}
+            </div>
+        </Window> 
     )
 }
 

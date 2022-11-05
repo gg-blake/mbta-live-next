@@ -1,7 +1,8 @@
 import { useEffect , useState } from 'react';
-import TrainMap from '../components/train-map';
-import TrainTitle from '../components/train-title';
 import { fetchStops } from '../utils/mbta-fetch';
+import Window from '../components/window';
+import TrainTitle from '../components/train-title';
+import TrainMap from '../components/train-map';
 
 // Set train primary color
 const color = "#139c13";
@@ -13,9 +14,14 @@ const branchNames: string[] = ["E Branch", "D Branch", "C Branch", "B Branch"];
 const Trains = () => {
     // Make state for storing each of the branches respective stop lists
     const [greenBranch, setGreenBranch] = useState<string[][] | null | any[]>(null);
+    // Set state for whether user's browser is firefox or not
+    const [isFirefox, setIsFirefox] = useState(false);
 
     // Load the all the branch stop data on page load or on mount
     useEffect(() => {
+        // @ts-ignore
+        // NOTE : InstallTrigger has depreciated as of 2018
+        setIsFirefox(typeof InstallTrigger !== 'undefined');
         // Store a promise object for each of the branches' stops upon making request
         const branchE = fetchStops("Green-D").then(stops => Array.from(stops).reverse());
         const branchD = fetchStops("Green-E").then(stops => Array.from(stops).reverse());
@@ -29,10 +35,12 @@ const Trains = () => {
 
     // Render component to DOM
     return (
-        <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
-            <TrainTitle name="Green Line" branchNames={branchNames} color={color} />
-            {greenBranch != null ? <TrainMap branches={greenBranch} color={color} branchNames={branchNames} /> : null}
-        </div>
+        <Window isCompat={isFirefox}>
+            <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
+                <TrainTitle name="Green Line" branchNames={branchNames} color={color} />
+                {greenBranch != null ? <TrainMap branches={greenBranch} color={color} branchNames={branchNames} /> : null}
+            </div>
+        </Window>
     )
 }
 
