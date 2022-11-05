@@ -1,8 +1,8 @@
 import { useEffect , useState } from 'react';
-import { difference } from '../../utils/operations';
-import TrainMap from '../../components/train-map';
-import TrainTitle from '../../components/train-title';
-import { fetchStops } from '../../utils/mbta-fetch';
+import { difference } from '../utils/operations';
+import TrainMap from '../components/train-map';
+import TrainTitle from '../components/train-title';
+import { fetchStops } from '../utils/mbta-fetch';
 
 // Ashmont will be treated in this project as a separate branch of the red line
 // Because of this, I will need to specify its unique stops and assign it to its own object of type Set

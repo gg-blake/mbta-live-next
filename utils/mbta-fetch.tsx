@@ -1,7 +1,6 @@
-
 import { Stop , Position } from './types';
-const MBTA = require('../node_modules/mbta-client/index.js');
 
+const MBTA = require('../node_modules/mbta-client/index.js');
 const API_KEY = '7226f7ee55514c019819bac6eacdaad9';
 const mbta = new MBTA(API_KEY);
 
