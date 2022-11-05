@@ -20,7 +20,7 @@ const Trains = () => {
     // Make state for storing each of the branches respective stop lists
     const [redBranch, setRedBranch] = useState<string[][] | null | any[]>(null);
     // Set state for whether user's browser is firefox or not
-    const [isFirefox, setIsFirefox] = useState(false);
+    const [isFirefox, setIsFirefox] = useState(true);
 
     // Load the all the branch stop data on page load or on mount
     useEffect(() => {

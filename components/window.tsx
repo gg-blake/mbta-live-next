@@ -1,9 +1,10 @@
 import BrowserNotSupported from "./brwser-err"
 
 export default function Window({children, isCompat}: {children: any, isCompat: boolean}) {
-    if (isCompat) {
-        return <>{children}</>
-    } else {
+    if (!isCompat) {
         return <BrowserNotSupported />
+    } else {
+        return <>{children}</>
+        
     }
 }
