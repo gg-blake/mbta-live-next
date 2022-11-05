@@ -1,36 +1,32 @@
-import '../../styles/Train.module.css';
-import MBTA from 'mbta-client';
-import {useEffect, useState, useRef, useImperativeHandle, useInsertionEffect} from 'react';
-import NextApp from 'next';
+import { useEffect , useState } from 'react';
 import TrainMap from './components/train-map';
-import { Stop , Area } from './utils/types';
+import TrainTitle from './components/train-title';
+import { fetchStops } from './utils/mbta-fetch';
 
-const API_KEY = '7226f7ee55514c019819bac6eacdaad9';
-const mbta = new MBTA(API_KEY);
+// Set train primary color
+const color = "#fa902d";
 
-const Trains: NextApp = () => {
+// List visible branch names of the train
+const branchNames: string[] = ["Oak Grove - Forest Hills"];
+
+// Define the React FC
+const Trains = () => {
+    // Make state for storing each of the branches respective stop lists
     const [orangeBranch, setOrangeBranch] = useState<string[][] | null>(null);
 
+    // Load the all the branch stop data on page load or on mount
     useEffect(() => {
-        getStops('Orange').then(stops => {
-            setOrangeBranch([Array.from(stops)]);
-        })
+        // Once the stops request is fulfilled set the branch state to an array of the stop array (2D-array)
+        fetchStops('Orange').then(stops => setOrangeBranch([Array.from(stops)]));
     }, [])
 
-    async function getStops(name: string) {
-        return await mbta.fetchStopsByRoute(name)
-            .then((response: Stop[]) => {
-                let stops: Set<string> = new Set([]);
-                response.map(response_item  => {
-                    stops.add(response_item.id);
-                })
-                return stops
-            })
-    }
-    
-
+    // Render component to DOM
     return (
-        <div className='w-full px-8 h-screen bg-yellow-50 flex items-center'>{orangeBranch != null ? <TrainMap branches={orangeBranch} color="#fa902d" /> : null}</div>
+        <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
+            <TrainTitle name="Orange Line" branchNames={branchNames} color={color} />
+            {orangeBranch != null ? <TrainMap branches={orangeBranch} color={color} branchNames={branchNames} /> : null}
+            
+        </div>
     )
 }
 

@@ -1,50 +1,42 @@
-import '../../styles/Train.module.css';
-import MBTA from 'mbta-client';
 import { useEffect , useState } from 'react';
-import { NextPage } from 'next';
+import { difference } from './utils/operations';
 import TrainMap from './components/train-map';
-import { Stop , Area } from './utils/types';
-import { difference } from './utils/set-operations';
+import TrainTitle from './components/train-title';
+import { fetchStops } from './utils/mbta-fetch';
 
-const API_KEY = '7226f7ee55514c019819bac6eacdaad9';
-const mbta: MBTA = new MBTA(API_KEY);
+// Ashmont will be treated in this project as a separate branch of the red line
+// Because of this, I will need to specify its unique stops and assign it to its own object of type Set
 const ASHMONT_STOPS: Set<string> = new Set(['place-shmnl', 'place-fldcr', 'place-smmnl', 'place-asmnl']);
 
-const Trains: NextPage = () => {
+// Set train primary color
+const color = "#DA291C";
+
+// List visible branch names of the train
+const branchNames: string[] = ["Alewife - Braintree", "Alewife - Ashmont", "Mattapan Branch"];
+
+// Define the React FC
+const Trains = () => {
+    // Make state for storing each of the branches respective stop lists
     const [redBranch, setRedBranch] = useState<string[][] | null>(null);
 
+    // Load the all the branch stop data on page load or on mount
     useEffect(() => {
-        const brainBranch = getStops('Red').then(stops => {
-            return Array.from(difference(stops, ASHMONT_STOPS))
-        });
-        const ashBranch = getStops('Red').then(stops => {
-            return ["place-jfk", ...Array.from(ASHMONT_STOPS)]
-        })
-        const mattBranch = getStops('Mattapan').then(stops => {
-            return Array.from(stops)
-        });
+        // Store a promise object for each of the branches' stops upon making request
+        const brainBranch = fetchStops('Red').then(stops => Array.from(difference(stops, ASHMONT_STOPS)));
+        const ashBranch = fetchStops('Red').then(stops => ["place-jfk", ...Array.from(ASHMONT_STOPS)]);
+        const mattBranch = fetchStops('Mattapan').then(stops => Array.from(stops));
 
+        /* Once all the promises have been fulfilled (all stop data is received),
+        set the branch state to an array of all the stop arrays (2D-array) */
         Promise.all([brainBranch, ashBranch, mattBranch]).then(responses => setRedBranch(responses))
-
-        
     }, [])
 
-    async function getStops(name: string) {
-        return await mbta.fetchStopsByRoute(name)
-            .then((response: Stop[]) => {
-                let stops: Set<string> = new Set([]);
-                response.map(response_item  => {
-                    stops.add(response_item.id);
-                })
-                return stops
-            })
-        
-        
-    }
-    
-
+    // Render component to DOM
     return (
-        <div className='w-full px-8 h-screen bg-yellow-50 flex items-center'>{redBranch != null ? <TrainMap branches={redBranch} color="#DA291C" /> : null}</div>
+        <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
+            <TrainTitle name="Red Line" branchNames={branchNames} color={color} />
+            {redBranch != null ? <TrainMap branches={redBranch} color={color} branchNames={branchNames} /> : null}
+        </div>
     )
 }
 
