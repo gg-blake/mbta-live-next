@@ -20,4 +20,4 @@ type ArrivalData = {
     name: string
 }
 
-export type { Stop , Area , Position };
+export type { Stop , Area , Position , ArrivalData };
