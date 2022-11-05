@@ -1,5 +1,6 @@
-import MBTA, { MBTAResponse } from 'mbta-client';
+
 import { Stop , Position } from './types';
+const MBTA = require('../node_modules/mbta-client/index.js');
 
 const API_KEY = '7226f7ee55514c019819bac6eacdaad9';
 const mbta = new MBTA(API_KEY);
@@ -30,7 +31,7 @@ async function fetchStops(name: string) {
 
 
 async function _fetchNextTrainTime(stop_id: string, direction_id: number) {
-    const handleResponse = (res?: MBTAResponse) => {
+    const handleResponse = (res?: any) => {
         // filter for upcoming train times that have a valid timestamp
         var times = res.data.map((d: any) => {
             if (d.attributes.arrival_time != null) {
@@ -56,7 +57,7 @@ async function _fetchNextTrainTime(stop_id: string, direction_id: number) {
         return nearestArrival
     }
 
-    return await mbta.fetchPredictions({stop: stop_id, sort:"arrival_time", limit:10, direction_id:direction_id}).then((res?: MBTAResponse) => handleResponse(res));
+    return await mbta.fetchPredictions({stop: stop_id, sort:"arrival_time", limit:10, direction_id:direction_id}).then((res?: any) => handleResponse(res));
 }
 
 async function fetchStopData(ref: Position) {

@@ -8,7 +8,7 @@ type Area = {
     height: number
 }
 
-type Position {
+type Position = {
     x: number,
     y: number,
     name: string

@@ -1,7 +1,7 @@
 import { useEffect , useState } from 'react';
-import TrainMap from './components/train-map';
-import TrainTitle from './components/train-title';
-import { fetchStops } from './utils/mbta-fetch';
+import TrainMap from '../../components/train-map';
+import TrainTitle from '../../components/train-title';
+import { fetchStops } from '../../utils/mbta-fetch';
 
 // Set train primary color
 const color = "#fa902d";

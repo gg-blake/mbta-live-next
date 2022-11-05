@@ -1,13 +1,9 @@
-import '../../../styles/Train.module.css';
-import MBTA from 'mbta-client';
-import {useEffect, useState, useRef, useImperativeHandle, useInsertionEffect} from 'react';
-import NextApp from 'next';
+import React from 'react';
+import {useEffect, useState, useRef } from 'react';
 import LinkedList from '../utils/linked-list';
-import { Area , Position , ArrivalData } from '../utils/types';
-import { callbackify } from 'util';
+import { Position , ArrivalData } from '../utils/types';
 import { fetchStopData } from '../utils/mbta-fetch';
 import { sliceAtFirstMutual } from '../utils/operations';
-import React from 'react';
 
 /* I made a variable with a global scope so that once the color prop is passed within TrainMap, 
 it can be accessed by other separate components */
@@ -15,7 +11,7 @@ var staticColor:string = "#000000";
 
 // Global variable stores all stops grid positions
 // This is useful for adding event listeners to grid segments
-var coords = {};
+var coords: any = {};
 
 // LinkedTrain objects require that node values are of type string[]
 // So I made some extra methods for computing these node values
@@ -61,6 +57,7 @@ class LinkedTrain extends LinkedList {
                 return 0;
             }
         }
+        return 0;
     }
 
 }
@@ -68,11 +65,12 @@ class LinkedTrain extends LinkedList {
 // Add all the stops for specified node into subgrid
 // Subgrids in CSS allow a grid to inherit the cell dimensions of its parent, no matter how many cells it contains
 // SUBGRID BE AWESOME
-function _buildBranch(branch: Array<string>, x, y, color: string) {
+function _buildBranch(branch: Array<string>, x: number, y: number, color: string) {
     // Assign an array of all DOM representations of the branch's stops
     const l = branch.map((e: any, i: number) => {
         // Record all the filled grid cells so event listeners can be added
-        coords[[x+i, y]] = e; // YOU DIDN'T SEE ANYTHING, FOOL!
+        let c = [x+i, y];
+        coords[c.toString()] = e; // YOU DIDN'T SEE ANYTHING, FOOL!
         
         return (
             <div style={{backgroundColor: color}} key={i} className='h-[20px] w-full font-PublicSans text-sm flex items-center justify-center'>
@@ -85,7 +83,7 @@ function _buildBranch(branch: Array<string>, x, y, color: string) {
 }
 
 
-function Stop({name, selectedRef, row, col}:{name: string, selectedRef: any[], row:number, col:number}) {
+function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef: any[], row:number, col:number}) {
     const thisRef = useRef<HTMLDivElement | null>(null);
 
     return (
@@ -120,14 +118,12 @@ function Tooltip({ position , arrivalTimes } : { position: Position, arrivalTime
 }
 
 
-function RootBranch({children, rootList , trains , branches , branchNames=[] }: {children: JSX.Element[] | JSX.Element, rootList: JSX.Element[], trains: LinkedTrain, branches: string[][], branchNames: string[]}) {
+function RootBranch({children, rootList , trains , branches }: {children: JSX.Element[] | JSX.Element, rootList: JSX.Element[], trains: any, branches: string[][], branchNames: string[]}) {
     const [overflow, setOverflow] = useState(0);
     const [selectedRef, setSelectedRef] = useState<Position | null>(null);
     const [toolTip, setToolTip] = useState<JSX.Element | null>(null);
 
-    useEffect(() => computeBounds(), [children])
-
-    function computeBounds() {
+    useEffect(() => {
         /* when child grid goes out of the bounds of the parent grid,
         expand the bounds of the parent grid to offset the disparity */
 
@@ -140,7 +136,7 @@ function RootBranch({children, rootList , trains , branches , branchNames=[] }: 
         if (boundDistance > 0) {
             setOverflow(boundDistance);
         }
-    }
+    }, [children, rootList, branches, trains])
 
     const getCells = () => {
         let cellList: JSX.Element[] = [];
@@ -158,7 +154,7 @@ function RootBranch({children, rootList , trains , branches , branchNames=[] }: 
 
     useEffect(() => {
         if (selectedRef != null) {
-            fetchStopData(selectedRef).then(time => {
+            fetchStopData(selectedRef).then((time: any) => {
                 setToolTip(<Tooltip  position={selectedRef} arrivalTimes={time} />);
             })
         } else {
@@ -168,7 +164,7 @@ function RootBranch({children, rootList , trains , branches , branchNames=[] }: 
 
     return (
         <div style={{gridTemplateColumns: `repeat(${rootList.length + overflow}, 1fr)`}} className='relative flex-grow grid gap-y-3'>
-            <div style={{gridTemplateColumns: 'subgrid', gridColumn: '1/'+(rootList.length+1)}} className='grid h-auto rounded-full overflow-hidden rounded-full shadow-md'>{rootList}</div>
+            <div style={{gridTemplateColumns: 'subgrid', gridColumn: '1/'+(rootList.length+1)}} className='grid h-auto rounded-full overflow-hidden shadow-md'>{rootList}</div>
             {children}
             
             
@@ -220,11 +216,12 @@ export default function TrainMap({ branches , color , branchNames } : { branches
         // calculate distance between all nodes before current node
         for (var i = 0; i < index + 1; i++) {
             offset += trains.findDistance(i);
+            
         }
 
         // render child branch starting on total offset distance of the contained grid
         return (
-            <ChildBranch start={offset + 1}>{_buildBranch(branch, offset, index + 1, color)}</ChildBranch>
+            <ChildBranch key={"child-branch-"+index} start={offset + 1}>{_buildBranch(branch, offset, index + 1, color)}</ChildBranch>
         )
     })
 
@@ -234,7 +231,7 @@ export default function TrainMap({ branches , color , branchNames } : { branches
             {branchList}
             </RootBranch>
             <div className='h-full w-auto flex flex-col gap-y-3'>
-                {branchNames.map(name => <div className='w-full flex-grow flex justify-center items-center'><div style={{color: color, backgroundColor: color+"45"}} className=' bg-gray-400 rounded-full text-[10px] py-[2px] px-[10px] drop-shadow-md h-auto w-auto font-Inter'>{name}</div></div>)}
+                {branchNames.map((name, index) => <div key={"branch-label-"+index} className='w-full flex-grow flex justify-center items-center'><div style={{color: color, backgroundColor: color+"45"}} className=' bg-gray-400 rounded-full text-[10px] py-[2px] px-[10px] drop-shadow-md h-auto w-auto font-Inter'>{name}</div></div>)}
             </div>
         </div>
     )

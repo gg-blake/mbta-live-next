@@ -62,18 +62,29 @@ class LinkedList {
         if (this.head && index <= this.size) {
             let node = new Node(data);
 
-            let current, previous;
-            current = this.head;
-
-            for (var i = 0; i < index; i++) {
-                previous = current;
-                current = current.next;
+            var current: NodeType | null = this.head;
+            if (current != null) {
+                let previous;
+                for (var i = 0; i < index; i++) {
+                    previous = current;
+                    if (current != null) {
+                        current = current.next;
+                    } else {
+                        break
+                    }
+                    
+                }
+    
+                node.next = current;
+                if (previous != null) {
+                    previous.next = node;
+                }
+                
+                
+                this.size++;
             }
 
-            node.next = current;
-            previous.next = node;
             
-            this.size++;
         }
         
 
@@ -96,28 +107,39 @@ class LinkedList {
     }
 
     valueAt(index: number) {
-        if (this.head) {
-            let current = this.head;
+        let current = this.head;
+        if (current != null) {
             for (var i = 0; i < index; i++) {
-                current = current.next;
+                if (current != null) {
+                    current = current.next;
+                } else {
+                    break
+                }
+                
             }
 
             return current;
         } else {
-            return null;
+            return null
         }
     }
 
     changeValue(index: number, value: string[]) {
-        if (this.head) {
-            let current = this.head;
+        let current = this.head;
+        if (current != null) {
             for (var i = 0; i < index; i++) {
-                current = current.next;
+                if (current != null) {
+                    current = current.next;
+                } else {
+                    break
+                }
+                
             }
 
-            current.value = value;
-        } else {
-            return null;
+            if (current != null) {
+                current.value = value;
+            }
+            
         }
     }
 }

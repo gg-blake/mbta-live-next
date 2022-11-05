@@ -1,7 +1,7 @@
 export default function TrainTitle({ name , branchNames , color }: {name: string, branchNames: string[], color: string}) {
-    const lineList = branchNames.map(item => {
-        return <div style={{color: color, backgroundColor: color+"45"}} className='rounded-full text-[20px] py-[2px] px-[10px] drop-shadow-md h-auto w-auto font-Inter'>{item}</div>
-    })
+    const lineList = branchNames != undefined ? branchNames.map((item, index) => {
+        return <div key={"branch-tag-"+index} style={{color: color, backgroundColor: color+"45"}} className='rounded-full text-[20px] py-[2px] px-[10px] drop-shadow-md h-auto w-auto font-Inter'>{item}</div>
+    }) : [];
 
     return (
         <div className='w-full h-autoflex justify-start items-center'>

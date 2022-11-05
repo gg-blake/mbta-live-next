@@ -1,7 +1,7 @@
 import { useEffect , useState } from 'react';
-import TrainMap from './components/train-map';
-import TrainTitle from './components/train-title';
-import { fetchStops } from './utils/mbta-fetch';
+import TrainMap from '../../components/train-map';
+import TrainTitle from '../../components/train-title';
+import { fetchStops } from '../../utils/mbta-fetch';
 
 // Set train primary color
 const color = "#139c13";
@@ -12,7 +12,7 @@ const branchNames: string[] = ["E Branch", "D Branch", "C Branch", "B Branch"];
 // Define the React FC
 const Trains = () => {
     // Make state for storing each of the branches respective stop lists
-    const [greenBranch, setGreenBranch] = useState<string[][] | null>(null);
+    const [greenBranch, setGreenBranch] = useState<string[][] | null | any[]>(null);
 
     // Load the all the branch stop data on page load or on mount
     useEffect(() => {
