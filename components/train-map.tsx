@@ -226,7 +226,7 @@ export default function TrainMap({ branches , color , branchNames } : { branches
     })
 
     return (
-        <div className='flex flex-row w-full h-auto gap-x-2'>
+        <div className='flex flex-row w-full h-auto gap-x-2 mt-[180px]'>
             <RootBranch rootList={_buildBranch(fBranches[0], 0, 0, color)} trains={trains} branches={fBranches} branchNames={branchNames}>
             {branchList}
             </RootBranch>

@@ -3,6 +3,7 @@ import { fetchStops } from '../utils/mbta-fetch';
 import Window from '../components/window';
 import TrainTitle from '../components/train-title';
 import TrainMap from '../components/train-map';
+import Navigation from '../components/navigation';
 
 // Set train primary color
 const color = "#3551de";
@@ -29,9 +30,10 @@ const Trains = () => {
     // Render component to DOM
     return (
         <Window isCompat={isFirefox}>
-            <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between pb-[200px] pt-[50px] flex-col overflow-hidden'>
+            <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between py-[50px] flex-col overflow-hidden'>
                 <TrainTitle name="Blue Line" branchNames={branchNames} color={color} />
                 {blueBranch != null ? <TrainMap branches={blueBranch} color={color} branchNames={branchNames} /> : null}
+                <Navigation color={color} />
             </div>
         </Window>
         
