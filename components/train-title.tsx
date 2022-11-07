@@ -4,7 +4,7 @@ export default function TrainTitle({ name , branchNames , color }: {name: string
     }) : [];
 
     return (
-        <div className='w-full h-autoflex justify-start items-center'>
+        <div className='w-auto h-auto'>
             <div className="ml-2 w-full h-auto flex flex-row gap-5">
                 {lineList}
             </div>

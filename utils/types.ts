@@ -1,3 +1,5 @@
+import React from 'react';
+
 type Stop = {
     name: string,
     id: string
@@ -17,7 +19,9 @@ type Position = {
 type ArrivalData = {
     right: Date | null,
     left: Date | null,
-    name: string
+    name: string | null
 }
 
-export type { Stop , Area , Position , ArrivalData };
+type ArrivalDataState = [ArrivalData, React.Dispatch<React.SetStateAction<ArrivalData>>];
+
+export type { Stop , Area , Position , ArrivalData , ArrivalDataState };
