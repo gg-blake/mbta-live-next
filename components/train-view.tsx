@@ -35,7 +35,8 @@ function TrainViewTooltip({ position , arrivalTimes , color } : { position: Posi
     )
 }
 
-function range(n) {
+function range(n: number) {
+    // @ts-ignore
     return [...Array(n).keys()]
 }
 
@@ -72,17 +73,17 @@ function TrainView({ trainData , color }: { trainData: ArrivalData , color: stri
             {right: ((((_timeDelta(trainData.right) || 0) <= 10 ? _timeDelta(trainData.right) || 0 : 10) * 10)).toString() + "%", easing:"ease-out"},
             {right: 0, easing:'linear'}
         ], (_timeDelta(trainData.right) || 0) * 60000);
-    }, [trainData.name])
+    }, [trainData.name, trainData.left, trainData.right])
 
 
     const TimeMeter = () => {
         return (
             <>
             <div style={{borderColor: color}} className="absolute top-[-3px] w-full h-[8px] grid grid-cols-10 grid-rows-1 border-r-2">
-                {range(10).map(() => <div style={{borderColor: color}} className="w-full h-full border-l-2"></div>)}
+                {range(10).map((i) => <div key={i} style={{borderColor: color}} className="w-full h-full border-l-2"></div>)}
             </div>
             <div style={{borderColor: color}} className="absolute top-[-2px] w-full h-[6px] grid grid-cols-100 grid-rows-1 border-r-[1px]">
-                {range(100).map(() => <div style={{borderColor: color}} className="w-full h-full border-l-[1px]"></div>)}
+                {range(100).map((i) => <div key={i} style={{borderColor: color}} className="w-full h-full border-l-[1px]"></div>)}
             </div>
             </>
         )
