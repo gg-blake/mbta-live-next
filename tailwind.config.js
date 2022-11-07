@@ -10,7 +10,11 @@ module.exports = {
       'PTSansNarrow': ['"PT Sans Narrow"', 'sans-serif'],
       'Inter': ['"Inter"', 'sans-serif']
     },
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        '100': 'repeat(100, minmax(0, 1fr))',
+      }
+    },
   },
   plugins: [],
 }
