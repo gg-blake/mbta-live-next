@@ -1,9 +1,10 @@
 import React from 'react';
 import {useEffect, useState, useRef } from 'react';
 import LinkedList from '../utils/linked-list';
-import { Position , ArrivalData } from '../utils/types';
+import { Position , ArrivalData, ArrivalDataState } from '../utils/types';
 import { fetchStopData } from '../utils/mbta-fetch';
 import { sliceAtFirstMutual } from '../utils/operations';
+import { TrainViewTooltip } from './train-view';
 
 /* I made a variable with a global scope so that once the color prop is passed within TrainMap, 
 it can be accessed by other separate components */
@@ -65,16 +66,41 @@ class LinkedTrain extends LinkedList {
 // Add all the stops for specified node into subgrid
 // Subgrids in CSS allow a grid to inherit the cell dimensions of its parent, no matter how many cells it contains
 // SUBGRID BE AWESOME
-function _buildBranch(branch: Array<string>, x: number, y: number, color: string) {
+function _buildBranch(branches: string[][], branch: Array<string>, x: number, y: number, color: string) {
+    /* Determine the number of coord entries that should be
+    present on the loaded train map */
+    var count = 0;
+    branches.map(branch => {
+        branch.map(() => {
+            count++
+        })
+    })
+
+    // To prevent overlap of other subway stops, reset the properties of coords
+    if (Object.keys(coords).length > count) {
+        coords = {};
+    }
+
     // Assign an array of all DOM representations of the branch's stops
     const l = branch.map((e: any, i: number) => {
         // Record all the filled grid cells so event listeners can be added
         let c = [x+i, y];
         coords[c.toString()] = e; // YOU DIDN'T SEE ANYTHING, FOOL!
+
+        const css = `
+        .stop {
+            border-color: ${color+"30"};
+        }
+
+        .stop:hover {
+            border-width: 4px;
+        }
+        `
         
         return (
             <div style={{backgroundColor: color}} key={i} className='h-[20px] w-full font-PublicSans text-sm flex items-center justify-center'>
-                <div className='w-[1vw] h-[1vw] max-w-[14px] max-h-[14px] min-w-[10px] min-h-[10px] bg-white rounded-full'></div>
+                <style>{css}</style>
+                <div className='stop w-[1vw] h-[1vw] max-w-[14px] max-h-[14px] min-w-[10px] min-h-[10px] bg-white rounded-full'></div>
             </div>
         )
     });
@@ -87,38 +113,15 @@ function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef
     const thisRef = useRef<HTMLDivElement | null>(null);
 
     return (
-        <div ref={thisRef} onMouseEnter={() => selectedRef[1]({x:col, y:row, name: name})} style={{gridColumn: col, gridRow: row}} className="w-full h-full"></div>
+        <div ref={thisRef} onMouseEnter={() => selectedRef[1]({x:col, y:row, name: name})} style={{gridColumn: col, gridRow: row}} className="w-full h-full flex items-center justify-center"></div>
     )
 }
 
 
-function Tooltip({ position , arrivalTimes } : { position: Position, arrivalTimes: ArrivalData }) {
-    const formatTime = (date: Date | null) => {
-        if (date == null) {
-            return "Unavailable"
-        }
-        let timeLeft = Math.floor((date.getTime() - Date.now()) / 60000);
-        switch (timeLeft) {
-            case 0:
-                return "Arriving now"
-            case 1:
-                return "Arriving soon"
-            default:
-                return timeLeft + " mins"
-        }
-    }
-
-    return (
-        <div style={{gridColumn: position.x, gridRow: position.y, borderColor: staticColor}} className='w-[150px] h-[150px] mt-8 bg-white border-[1px] transition-all p-2 justify-self-center'>
-            <h1 style={{color: staticColor}} className='font-Inter text-md bold'>{arrivalTimes.name}</h1>
-            <p className='font-Inter text-md text-gray-300'>{formatTime(arrivalTimes.left)}</p>
-            <p className='font-Inter text-md text-gray-300'>{formatTime(arrivalTimes.right)}</p>
-        </div>
-    )
-}
 
 
-function RootBranch({children, rootList , trains , branches }: {children: JSX.Element[] | JSX.Element, rootList: JSX.Element[], trains: any, branches: string[][], branchNames: string[]}) {
+
+function RootBranch({data, children, rootList , trains , branches }: {data: ArrivalDataState, children: JSX.Element[] | JSX.Element, rootList: JSX.Element[], trains: any, branches: string[][], branchNames: string[]}) {
     const [overflow, setOverflow] = useState(0);
     const [selectedRef, setSelectedRef] = useState<Position | null>(null);
     const [toolTip, setToolTip] = useState<JSX.Element | null>(null);
@@ -155,11 +158,12 @@ function RootBranch({children, rootList , trains , branches }: {children: JSX.El
     useEffect(() => {
         if (selectedRef != null) {
             fetchStopData(selectedRef).then((time: any) => {
-                setToolTip(<Tooltip  position={selectedRef} arrivalTimes={time} />);
+                data[1](time);
             })
         } else {
             setToolTip(null);
         }
+        
     }, [selectedRef])
 
     return (
@@ -191,7 +195,7 @@ function ChildBranch(props: any) {
 }
 
 
-export default function TrainMap({ branches , color , branchNames } : { branches : Array<string>[], color: string, branchNames: string[]}) {
+export default function TrainMap({ data, branches , color , branchNames } : { data: ArrivalDataState, branches : Array<string>[], color: string, branchNames: string[]}) {
     staticColor = color;
     const trains = new LinkedTrain();
     var currentBranch = branches[0];
@@ -221,13 +225,13 @@ export default function TrainMap({ branches , color , branchNames } : { branches
 
         // render child branch starting on total offset distance of the contained grid
         return (
-            <ChildBranch key={"child-branch-"+index} start={offset + 1}>{_buildBranch(branch, offset, index + 1, color)}</ChildBranch>
+            <ChildBranch key={"child-branch-"+index} start={offset + 1}>{_buildBranch(branches, branch, offset, index + 1, color)}</ChildBranch>
         )
     })
 
     return (
         <div className='flex flex-row w-full h-auto gap-x-2 mt-[180px]'>
-            <RootBranch rootList={_buildBranch(fBranches[0], 0, 0, color)} trains={trains} branches={fBranches} branchNames={branchNames}>
+            <RootBranch data={data} rootList={_buildBranch(branches, fBranches[0], 0, 0, color)} trains={trains} branches={fBranches} branchNames={branchNames}>
             {branchList}
             </RootBranch>
             <div className='h-full w-auto flex flex-col gap-y-3'>

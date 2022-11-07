@@ -1,10 +1,13 @@
 import { useEffect , useState } from 'react';
+import { ArrivalData } from '../utils/types';
 import { fetchStops } from '../utils/mbta-fetch';
 import { difference } from '../utils/operations';
 import Window from '../components/window';
 import TrainTitle from '../components/train-title';
+import { TrainView } from '../components/train-view';
 import TrainMap from '../components/train-map';
 import Navigation from '../components/navigation';
+
 
 // Ashmont will be treated in this project as a separate branch of the red line
 // Because of this, I will need to specify its unique stops and assign it to its own object of type Set
@@ -22,6 +25,8 @@ const Trains = () => {
     const [redBranch, setRedBranch] = useState<string[][] | null | any[]>(null);
     // Set state for whether user's browser is firefox or not
     const [isFirefox, setIsFirefox] = useState(true);
+    // Set state for current selected stop info (arrival times, directions, etc.)
+    const [data, setData] = useState<ArrivalData>({name: null, left: null, right: null});
 
     // Load the all the branch stop data on page load or on mount
     useEffect(() => {
@@ -39,12 +44,19 @@ const Trains = () => {
         Promise.all([brainBranch, ashBranch, mattBranch]).then(responses => setRedBranch(responses))
     }, [])
 
+    useEffect(() => {
+        console.log(data);
+    }, [data])
+
     // Render component to DOM
     return (
         <Window isCompat={isFirefox}>
             <div className='w-full px-8 h-screen bg-yellow-50 flex justify-between py-[50px] flex-col overflow-hidden'>
-                <TrainTitle name="Red Line" branchNames={branchNames} color={color} />
-                {redBranch != null ? <TrainMap branches={redBranch} color={color} branchNames={branchNames} /> : null}
+                <div className='flex flex-row w-full h-auto'>
+                    <TrainTitle name="Red Line" branchNames={branchNames} color={color} />
+                    <TrainView trainData={data} color={color} />
+                </div>
+                {redBranch != null ? <TrainMap data={[data, setData]} branches={redBranch} color={color} branchNames={branchNames} /> : null}
                 <Navigation color={color} />
             </div>
         </Window> 
