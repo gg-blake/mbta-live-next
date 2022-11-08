@@ -126,7 +126,7 @@ function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef
 function Connection({row, col, isEndpoint=false}: {row: number, col: number, isEndpoint: boolean}) {
     return (
         <div style={{gridColumn: col, gridRow: `${row - 1} / span 2`}} className="w-full h-full flex flex-col justify-center items-center relative rounded-full py-[2px]">
-            <div style={{borderRadius: `${isEndpoint ? "0px 0px .6vw .6vw" : ".6vw"}`, borderWidth: `${isEndpoint ? "0 2px 2px 2px" : "2px"}`}} className='w-[1.2vw] h-[100%] border-[2px] border-black bg-white z-30 font-PublicSans text-black text-md'></div>
+            <div style={{borderRadius: `${isEndpoint ? "0px 0px .6vw .6vw" : ".6vw"}`, borderWidth: `${isEndpoint ? "0 2px 2px 2px" : "2px"}`}} className='w-[1.2vw] h-[100%] border-[2px] max-w-[15px] border-black bg-white z-30 font-PublicSans text-black text-md'></div>
         </div>
     )
 }
