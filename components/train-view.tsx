@@ -82,7 +82,7 @@ function TrainView({ trainData , color }: { trainData: ArrivalData , color: stri
     
     return (
         <div className="flex-grow h-auto flex flex-col items-end text-right gap-y-8 relative">
-            <h1 style={{color: color}} id="data-head" className="h-auto py-4 font-Inter text-5xl max-w-[500px]">{trainData.name}</h1>
+            <h1 style={{color: color}} id="data-head" className="h-auto py-4 font-Inter text-3xl">{trainData.name}</h1>
             <div id="time-ruler-1" style={{backgroundColor: color}} className="w-[80%] max-w-[500px] h-[2px] relative mt-4">
                 
                 
