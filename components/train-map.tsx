@@ -11,7 +11,7 @@ var staticColor:string = "#000000";
 
 // Global variable stores all stops grid positions
 // This is useful for adding event listeners to grid segments
-var coords: any = {};
+var coords: any[] = [];
 
 // LinkedTrain objects require that node values are of type string[]
 // So I made some extra methods for computing these node values
@@ -76,15 +76,20 @@ function _buildBranch(branches: string[][], branch: Array<string>, x: number, y:
     })
 
     // To prevent overlap of other subway stops, reset the properties of coords
-    if (Object.keys(coords).length > count) {
-        coords = {};
+    if (coords.length > count) {
+        coords = [];
     }
+
+    
 
     // Assign an array of all DOM representations of the branch's stops
     const l = branch.map((e: any, i: number) => {
         // Record all the filled grid cells so event listeners can be added
-        let c = [x+i, y];
-        coords[c.toString()] = e; // YOU DIDN'T SEE ANYTHING, FOOL!
+        
+        if (!coords.find((coord) => (coord.name == e && coord.x == x+i && coord.y == y))) {
+            // Prevent stop duplicates from being added to coords
+            coords.push({x: x+i, y: y, name: e});
+        }
 
         const css = `
         .stop {
@@ -118,6 +123,14 @@ function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef
     )
 }
 
+function Connection({row, col, isEndpoint=false}: {row: number, col: number, isEndpoint: boolean}) {
+    return (
+        <div style={{gridColumn: col, gridRow: `${row - 1} / span 2`}} className="w-full h-full flex flex-col justify-center items-center relative rounded-full py-[2px]">
+            <div style={{borderRadius: `${isEndpoint ? "0px 0px .6vw .6vw" : ".6vw"}`, borderWidth: `${isEndpoint ? "0 2px 2px 2px" : "2px"}`}} className='w-[1.2vw] h-[100%] border-[2px] border-black bg-white z-30 font-PublicSans text-black text-md'></div>
+        </div>
+    )
+}
+
 
 
 
@@ -144,12 +157,27 @@ function RootBranch({data, children, rootList , trains , branches }: {data: Arri
 
     const getCells = () => {
         let cellList: JSX.Element[] = [];
-        for (const [key, value] of Object.entries(coords)) {
-            const c = key.split(',');
-            const col = parseInt(c[0]) + 1;
-            const row = parseInt(c[1]) + 1;
-            let element = <Stop name={value} selectedRef={[selectedRef, setSelectedRef]} row={row} col={col} />;
-            cellList.push(element);
+        let connectorRows: number[] = [1];
+        let connectorCols: number[] = [];
+
+        
+
+        console.log(coords);
+
+        let floatCoords = [];
+
+        for (let obj of coords) {
+            const col = obj.x + 1;
+            const row = obj.y + 1;
+            if (!connectorRows.includes(row)) {
+                connectorRows.push(row);
+                cellList.push(<Connection row={row} col={col} isEndpoint={connectorCols.includes(col)} key={row} />);
+                connectorCols.push(col);
+            } else {
+                let element = <Stop name={obj.name} selectedRef={[selectedRef, setSelectedRef]} row={row} col={col} />;
+                cellList.push(element);
+            }
+            
         }
 
         return cellList;
@@ -208,6 +236,8 @@ export default function TrainMap({ data, branches , color , branchNames } : { da
             return currentBranch
         }
     })
+
+    useEffect(() => {coords=[]}, [])
 
     for (let branch of fBranches) {
         trains.insertLastNode(branch);
