@@ -4,7 +4,6 @@ import LinkedList from '../utils/linked-list';
 import { Position , ArrivalData, ArrivalDataState } from '../utils/types';
 import { fetchStopData } from '../utils/mbta-fetch';
 import { sliceAtFirstMutual } from '../utils/operations';
-import { TrainViewTooltip } from './train-view';
 
 /* I made a variable with a global scope so that once the color prop is passed within TrainMap, 
 it can be accessed by other separate components */
@@ -172,7 +171,7 @@ function RootBranch({data, children, rootList , trains , branches }: {data: Arri
             {children}
             
             
-            <div style={{gridTemplateColumns: 'subgrid', gridTemplateRows: `repeat(${React.Children.toArray(children).length+1}, minmax(0, 1fr))`}} className='grid absolute w-full h-full'>
+            <div style={{gridTemplateColumns: 'subgrid', gridTemplateRows: `repeat(${React.Children.toArray(children).length+1}, minmax(0, 1fr))`}} className='grid absolute w-full h-full gap-y-3'>
                 {getCells()}
                 {toolTip}
             </div>
@@ -230,7 +229,7 @@ export default function TrainMap({ data, branches , color , branchNames } : { da
     })
 
     return (
-        <div className='flex flex-row w-full h-auto gap-x-2 mt-[180px]'>
+        <div className='flex flex-row w-full h-auto gap-x-2'>
             <RootBranch data={data} rootList={_buildBranch(branches, fBranches[0], 0, 0, color)} trains={trains} branches={fBranches} branchNames={branchNames}>
             {branchList}
             </RootBranch>

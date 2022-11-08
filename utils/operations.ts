@@ -39,4 +39,10 @@ function sliceAtFirstMutual(a: string[], b: string[]) {
   
 }
 
-export { intersection , difference , sliceAtFirstMutual };
+// Returns list of length n of 0 to n-1
+function range(n: number) {
+  // @ts-ignore
+  return [...Array(n).keys()]
+}
+
+export { intersection , difference , sliceAtFirstMutual , range };

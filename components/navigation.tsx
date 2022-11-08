@@ -19,7 +19,7 @@ export default function Navigation({ color }: {color: string}) {
     `
 
     return (
-        <div className="w-full h-auto flex justify-center">
+        <div className="w-full h-auto flex justify-center mt-14">
             <style>{css}</style>
             <div className="subway-select w-auto h-auto grid grid-cols-4 font-Inter font-light text-md gap-2 p-4">
                 <div className="grid-label col-span-4 h-auto py-[2px] font-Inter font-medium text-lg text-center">Subway Selection</div>
