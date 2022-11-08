@@ -112,7 +112,9 @@ function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef
     const thisRef = useRef<HTMLDivElement | null>(null);
 
     return (
-        <div ref={thisRef} onMouseEnter={() => selectedRef[1]({x:col, y:row, name: name})} style={{gridColumn: col, gridRow: row}} className="w-full h-full flex items-center justify-center"></div>
+        <div ref={thisRef} onMouseEnter={() => selectedRef[1]({x:col, y:row, name: name})} style={{gridColumn: col, gridRow: row}} className="w-full h-full flex items-center justify-center">
+            <div style={{borderColor: staticColor+"45"}} className='absolute w-[1vw] h-[1vw] rounded-full border-0 hover:border-[10px] hover:w-[calc(1vw_+_20px)] hover:h-[calc(1vw_+_20px)] transition-all'></div>
+        </div>
     )
 }
 
