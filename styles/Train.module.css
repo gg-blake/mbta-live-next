@@ -2,32 +2,3 @@
     opacity: 0;
     transition: opacity .2s ease, left .1s ease;
 }
-
-.stop {
-    grid-template-columns: subgrid;
-}
-
-.stop:hover ~ .tooltip {
-    opacity: 1;
-}
-
-.line:hover > .tooltip {
-    opacity: 1;
-}
-
-.subgrid {
-    grid-template-columns: subgrid;
-}
-
-.test-grid {
-    grid-template-columns: subgrid;
-}
-
-@keyframes slideInFromLeft {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
