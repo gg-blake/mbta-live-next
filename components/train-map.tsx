@@ -4,7 +4,6 @@ import LinkedList from '../utils/linked-list';
 import { Position , ArrivalData, ArrivalDataState } from '../utils/types';
 import { fetchStopData } from '../utils/mbta-fetch';
 import { sliceAtFirstMutual } from '../utils/operations';
-import { TrainViewTooltip } from './train-view';
 
 /* I made a variable with a global scope so that once the color prop is passed within TrainMap, 
 it can be accessed by other separate components */
