@@ -158,12 +158,6 @@ function RootBranch({data, children, rootList , trains , branches }: {data: Arri
         let connectorRows: number[] = [1];
         let connectorCols: number[] = [];
 
-        
-
-        console.log(coords);
-
-        let floatCoords = [];
-
         for (let obj of coords) {
             const col = obj.x + 1;
             const row = obj.y + 1;
