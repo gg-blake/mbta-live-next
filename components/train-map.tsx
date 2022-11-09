@@ -123,6 +123,7 @@ function Stop({name, selectedRef, row, col}:{name: string | unknown, selectedRef
     )
 }
 
+
 function Connection({row, col, isEndpoint=false}: {row: number, col: number, isEndpoint: boolean}) {
     return (
         <div style={{gridColumn: col, gridRow: `${row - 1} / span 2`}} className="w-full h-full flex flex-col justify-center items-center relative rounded-full py-[2px]">
@@ -130,9 +131,6 @@ function Connection({row, col, isEndpoint=false}: {row: number, col: number, isE
         </div>
     )
 }
-
-
-
 
 
 function RootBranch({data, children, rootList , trains , branches }: {data: ArrivalDataState, children: JSX.Element[] | JSX.Element, rootList: JSX.Element[], trains: any, branches: string[][], branchNames: string[]}) {
