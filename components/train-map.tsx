@@ -153,6 +153,23 @@ function RootBranch({data, children, rootList , trains , branches }: {data: Arri
         }
     }, [children, rootList, branches, trains])
 
+
+    useEffect(() => {
+        var count = 0;
+        branches.map(branch => {
+            branch.map(() => {
+                count++
+            })
+        })
+        if (coords.length > count) {
+            do {
+                coords = [];
+                getCells();
+            } while (coords.length > count);
+        }
+        
+    }, [])
+
     const getCells = () => {
         let cellList: JSX.Element[] = [];
         let connectorRows: number[] = [1];
@@ -228,8 +245,6 @@ export default function TrainMap({ data, branches , color , branchNames } : { da
             return currentBranch
         }
     })
-
-    
 
     for (let branch of fBranches) {
         trains.insertLastNode(branch);
