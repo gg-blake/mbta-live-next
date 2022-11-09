@@ -229,7 +229,7 @@ export default function TrainMap({ data, branches , color , branchNames } : { da
         }
     })
 
-    useEffect(() => {coords=[]}, [])
+    
 
     for (let branch of fBranches) {
         trains.insertLastNode(branch);
