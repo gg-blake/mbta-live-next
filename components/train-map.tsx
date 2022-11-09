@@ -166,6 +166,8 @@ function RootBranch({data, children, rootList , trains , branches }: {data: Arri
                 coords = [];
                 getCells();
             } while (coords.length > count);
+        } else {
+            getCells();
         }
         
     }, [])
